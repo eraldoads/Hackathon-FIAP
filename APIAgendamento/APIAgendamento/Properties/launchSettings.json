@@ -1,0 +1,44 @@
+{
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RABBIT_HOSTNAME": "b-2e3cc774-1b4b-430c-aeb6-e56fbd0bdcff.mq.us-east-1.amazonaws.com",
+        "RABBIT_USERNAME": "piklesrabbit",
+        "RABBIT_PASSWORD": "Fast.FoodRabbitMQ",
+        "QTDE_RETRY_PAGAMENTO": "10"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5008"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "environmentVariables": {
+        "ASPNETCORE_HTTP_PORTS": "8080"
+      },
+      "publishAllPorts": true
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:24259",
+      "sslPort": 0
+    }
+  }
+}
