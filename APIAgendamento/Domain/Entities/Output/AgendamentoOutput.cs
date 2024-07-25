@@ -10,6 +10,8 @@
             IdMedico = agendamento.IdMedico;
             DataAgendamento = agendamento.DataAgendamento;
             Motivo = agendamento.Motivo;
+            StatusAgendamento = agendamento.StatusAgendamento;
+
         }
 
         public string IdAgendamento { get; set; }
@@ -17,5 +19,6 @@
         public int IdMedico { get; set; }
         public DateTime DataAgendamento { get; set; }
         public string? Motivo { get; set; }
+        public string StatusAgendamento { get; set; }
     }
 }

@@ -10,7 +10,8 @@ namespace Application.Services
         private readonly ILogger<AgendamentoWorkerService> _logger;
         public IServiceProvider Services { get; }
 
-        public AgendamentoWorkerService(IServiceProvider services, ILogger<AgendamentoWorkerService> logger)
+        public AgendamentoWorkerService(IServiceProvider services,
+                                        ILogger<AgendamentoWorkerService> logger)
         {
             Services = services;
             _logger = logger;
@@ -23,11 +24,9 @@ namespace Application.Services
 
         private async Task DoWork(CancellationToken cancellationToken)
         {
-            using (var scope = Services.CreateScope())
-            {
-                IAgendamentoScopedService scopedProcessingService = scope.ServiceProvider.GetRequiredService<IAgendamentoScopedService>();
-                await scopedProcessingService.DoWork(cancellationToken);
-            }
+            using var scope = Services.CreateScope();
+            IAgendamentoScopedService scopedProcessingService = scope.ServiceProvider.GetRequiredService<IAgendamentoScopedService>();
+            await scopedProcessingService.DoWork(cancellationToken);
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken)

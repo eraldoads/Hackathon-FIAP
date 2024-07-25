@@ -1,32 +1,22 @@
 ﻿using Application.Interfaces;
+using Application.Services;
 using Data.Context;
+using Data.Messaging;
 using Data.Repository;
 using Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System.Configuration;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Configuração do MongoDB
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDBSettings"));
 builder.Services.AddSingleton<MongoDBContext>();
 
-//builder.Services.AddScoped<AgendamentoRepository>();
-//builder.Services.AddScoped<AgendamentoService>();
-
-// Adiciona serviços ao contêiner.
-//var connectionStringMysql = builder.Configuration.GetConnectionString("ConnectionMysql");
-
-//builder.Services.AddDbContext<MySQLContextAgendamento>(options =>
-//    options.UseMySql(connectionStringMysql, ServerVersion.AutoDetect(connectionStringMysql),
-//        b => b.MigrationsAssembly("APIAgendamento"))); // Especificando o assembly de migrações
 
 builder.Services.AddControllers(options =>
 {
@@ -42,12 +32,12 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddScoped<IAgendamentoService, AgendamentoService>();
 builder.Services.AddScoped<IAgendamentoRepository, AgendamentoRepository>();
-//builder.Services.AddScoped<IAgendamentoMessageQueue, AgendamentoMessageQueue>();
-//builder.Services.AddScoped<IAgendamentoMessageQueueError, AgendamentoMessageQueueError>();
-//builder.Services.AddScoped<IAgendamentoMessageSender, AgendamentoMessageSender>();
-//builder.Services.AddScoped<IAgendamentoMessageService, AgendamentoMessageService>();
-//builder.Services.AddHostedService<AgendamentoWorkerService>();
-//builder.Services.AddScoped<IAgendamentoScopedService, AgendamentoScopedService>();
+builder.Services.AddScoped<IAgendamentoMessageQueue, AgendamentoMessageQueue>();
+builder.Services.AddScoped<IAgendamentoMessageQueueError, AgendamentoMessageQueueError>();
+builder.Services.AddScoped<IAgendamentoMessageSender, AgendamentoMessageSender>();
+builder.Services.AddScoped<IAgendamentoMessageService, AgendamentoMessageService>();
+builder.Services.AddHostedService<AgendamentoWorkerService>();
+builder.Services.AddScoped<IAgendamentoScopedService, AgendamentoScopedService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

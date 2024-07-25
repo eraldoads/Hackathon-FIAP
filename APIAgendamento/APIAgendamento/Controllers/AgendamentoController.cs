@@ -4,8 +4,6 @@ using Domain.Entities.Output;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace API.Controllers
 {
@@ -20,18 +18,17 @@ namespace API.Controllers
     [SwaggerResponse(412, "Condição prévia dada em um ou mais dos campos avaliada como falsa.", null)]
     [SwaggerResponse(500, "O servidor encontrou uma condição inesperada.", null)]
     [Consumes("application/json", [])]
-    public class AgendamentoController : ControllerBase
-    {
-        private readonly IAgendamentoService _agendamentoService;
 
-        public AgendamentoController(IAgendamentoService agendamentoService) => _agendamentoService = agendamentoService;
+    public class AgendamentoController(IAgendamentoService agendamentoService) : ControllerBase
+    {
+        private readonly IAgendamentoService _agendamentoService = agendamentoService;
 
         // GET : /agendamento
         [HttpGet]
         [SwaggerOperation(
             Summary = "Endpoint para retornar todos os agendamentos realizados",
             Description = "Busca todos os agendamentos realizados",
-            Tags = new[] { "Agendamento" }
+            Tags = ["Agendamento"]
         )]
         [SwaggerResponse(200, "Consulta executada com sucesso!", typeof(List<AgendamentoOutput>))]
         [SwaggerResponse(206, "Conteúdo Parcial!", typeof(List<AgendamentoOutput>))]
@@ -49,7 +46,7 @@ namespace API.Controllers
                              <b>Parâmetros de entrada:</b>
                              <br/> • <b>id</b>: o identificador do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
                              ",
-            Tags = new[] { "Agendamento" }
+            Tags = ["Agendamento"]
         )]
         [SwaggerResponse(200, "Consulta executada com sucesso!", typeof(AgendamentoOutput))]
         [SwaggerResponse(404, "O agendamento não foi encontrado.", null)]
@@ -68,13 +65,19 @@ namespace API.Controllers
         [SwaggerOperation(
             Summary = "Endpoint para criar um novo agendamento",
             Description = @"Cria um novo agendamento com os dados recebidos no corpo da requisição </br>
+                            </br>
                             <b>Parâmetros de entrada:</b>
                             <br/> • <b>idPaciente</b>: o identificador do paciente que está agendando ⇒ <font color='red'><b>Obrigatório</b></font>
                             <br/> • <b>idMedico</b>: o identificador do médico que está agendando ⇒ <font color='red'><b>Obrigatório</b></font>
                             <br/> • <b>dataAgendamento</b>: a data e hora do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
                             <br/> • <b>motivo</b>: o motivo do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
-                            ",
-            Tags = new[] { "Agendamento" }
+                            <br/> • <b>statusAgendamento</b>: o status do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/><br/>&nbsp;&nbsp;&nbsp;<b>Possíveis Status da Consulta:</b>
+                            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b> • </b> Solicitado
+                            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b> • </b> Confirmado
+                            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b> • </b> Cancelado
+                        ",
+            Tags = ["Agendamento"]
         )]
         [SwaggerResponse(201, "Agendamento criado com sucesso!", typeof(AgendamentoOutput))]
         [SwaggerResponse(400, "A solicitação não pode ser entendida pelo servidor devido à sintaxe malformada.", null)]
@@ -94,14 +97,20 @@ namespace API.Controllers
         [SwaggerOperation(
             Summary = "Endpoint para atualizar um agendamento",
             Description = @"Atualiza todos os campos de um agendamento com os dados recebidos no corpo da requisição </br>
-                             <b>Parâmetros de entrada:</b>
-                             <br/> • <b>id</b>: o identificador do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
-                             <br/> • <b>idPaciente</b>: o identificador do paciente que está agendando ⇒ <font color='red'><b>Obrigatório</b></font>
-                             <br/> • <b>idMedico</b>: o identificador do médico que está agendando ⇒ <font color='red'><b>Obrigatório</b></font>
-                             <br/> • <b>dataAgendamento</b>: a data e hora do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
-                             <br/> • <b>motivo</b>: o motivo do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
-                             ",
-            Tags = new[] { "Agendamento" }
+                            </br>                             
+                            <b>Parâmetros de entrada:</b>
+                            <br/> • <b>id</b>: o identificador do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/> • <b>idPaciente</b>: o identificador do paciente que está agendando ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/> • <b>idMedico</b>: o identificador do médico que está agendando ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/> • <b>dataAgendamento</b>: a data e hora do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/> • <b>motivo</b>: o motivo do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/> • <b>statusAgendamento</b>: o status do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/><br/>&nbsp;&nbsp;&nbsp;<b>Possíveis Status da Consulta:</b>
+                            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b> • </b> Solicitado
+                            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b> • </b> Confirmado
+                            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b> • </b> Cancelado
+                            ",
+            Tags = ["Agendamento"]
         )]
         [SwaggerResponse(200, "Agendamento atualizado com sucesso!", typeof(AgendamentoOutput))]
         [SwaggerResponse(400, "A solicitação não pode ser entendida pelo servidor devido à sintaxe malformada.", null)]
@@ -126,28 +135,34 @@ namespace API.Controllers
         [SwaggerOperation(
             Summary = "Endpoint para atualizar parcialmente um agendamento",
             Description = @"Atualiza campos específicos de um agendamento com os dados recebidos no corpo da requisição </br>
-                             <b>Parâmetros de entrada:</b>
-                             <br/> • <b>idPaciente</b>: o identificador do paciente que está agendando ⇒ <font color='red'><b>Obrigatório</b></font>
-                             <br/> • <b>idMedico</b>: o identificador do médico que está agendando ⇒ <font color='red'><b>Obrigatório</b></font>
-                             <br/> • <b>dataAgendamento</b>: a data e hora do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
-                             <br/> • <b>motivo</b>: o motivo do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
-                             <br/><b>Exemplo de corpo da requisição:</b>
-                             <pre>
-                                &nbsp;&nbsp;[
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""op"": ""replace"",
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""path"": ""/dataAgendamento"",
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""value"": ""2024-07-23T02:01:07.904Z""
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""op"": ""replace"",
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""path"": ""/motivo"",
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""value"": ""Consulta de rotina""
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-                                &nbsp;&nbsp;]
-                             </pre>
-                             ",
-            Tags = new[] { "Agendamento" }
+                            </br>
+                            <b>Parâmetros de entrada:</b>
+                            <br/> • <b>idPaciente</b>: o identificador do paciente que está agendando ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/> • <b>idMedico</b>: o identificador do médico que está agendando ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/> • <b>dataAgendamento</b>: a data e hora do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/> • <b>motivo</b>: o motivo do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/> • <b>statusAgendamento</b>: o status do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
+                            <br/><br/>&nbsp;&nbsp;&nbsp;<b>Possíveis Status da Consulta:</b>
+                            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b> • </b> Solicitado
+                            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b> • </b> Confirmado
+                            <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b> • </b> Cancelado
+                            <br/><b>Exemplo de corpo da requisição:</b>
+                            <pre>
+                               &nbsp;&nbsp;[
+                                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+                                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""op"": ""replace"",
+                                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""path"": ""/dataAgendamento"",
+                                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""value"": ""2024-07-23T02:01:07.904Z""
+                                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},
+                                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+                                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""op"": ""replace"",
+                                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""path"": ""/motivo"",
+                                       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;""value"": ""Consulta de rotina""
+                                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+                               &nbsp;&nbsp;]
+                            </pre>
+                            ",
+            Tags = ["Agendamento"]
         )]
         [SwaggerResponse(200, "Agendamento atualizado com sucesso!", typeof(AgendamentoOutput))]
         [SwaggerResponse(400, "A solicitação não pode ser entendida pelo servidor devido à sintaxe malformada.", null)]
@@ -182,6 +197,7 @@ namespace API.Controllers
 
             var updatedAgendamento = await _agendamentoService.PatchAgendamentoAsync(id, agendamentoToPatch);
             return Ok(updatedAgendamento);
+
         }
 
         // DELETE : /agendamento/{id}
@@ -192,7 +208,7 @@ namespace API.Controllers
                              <b>Parâmetros de entrada:</b>
                              <br/> • <b>id</b>: o identificador do agendamento ⇒ <font color='red'><b>Obrigatório</b></font>
                              ",
-            Tags = new[] { "Agendamento" }
+            Tags = ["Agendamento"]
         )]
         [SwaggerResponse(204, "Agendamento deletado com sucesso!", null)]
         [SwaggerResponse(404, "O agendamento não foi encontrado.", null)]

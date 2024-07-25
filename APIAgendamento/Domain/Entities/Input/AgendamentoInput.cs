@@ -19,5 +19,9 @@ namespace Domain.Entities.Input
         [StringLength(255)]
         public string? Motivo { get; set; }
 
+        [Required]
+        [StringLength(20)]
+        public string? StatusAgendamento { get; set; }
+
     }
 }

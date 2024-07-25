@@ -15,7 +15,7 @@ namespace Data.Messaging
         private IModel _channel;
         private bool _disposed = false;
 
-        private readonly string _hostname = "b-2e3cc774-1b4b-430c-aeb6-e56fbd0bdcff.mq.us-east-1.amazonaws.com";
+        private readonly string _hostname = Environment.GetEnvironmentVariable("RABBIT_HOSTNAME");
         private readonly string _username = Environment.GetEnvironmentVariable("RABBIT_USERNAME");
         private readonly string _password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD");
 
@@ -76,14 +76,14 @@ namespace Data.Messaging
                 }
             };
 
-            _channel.BasicConsume("pagamento_erro", false, consumer);
+            _channel.BasicConsume("agendamento_erro", false, consumer);
         }
 
         public void ReenqueueMessage(string message)
         {
             EnsureNotDisposed();
             var body = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish("pagamento_erro_exchange", "pagamento_erro.*", null, body);
+            _channel.BasicPublish("agendamento_erro_exchange", "agendamento_erro.*", null, body);
         }
 
         private void ConnectRabbitMQ()
@@ -111,9 +111,9 @@ namespace Data.Messaging
                 _connection = factory.CreateConnection();
                 _channel = _connection.CreateModel();
 
-                _channel.ExchangeDeclare("pagamento_erro_exchange", ExchangeType.Direct);
-                _channel.QueueDeclare("pagamento_erro", false, false, false, null);
-                _channel.QueueBind("pagamento_erro", "pagamento_erro_exchange", "pagamento_erro.*", null);
+                _channel.ExchangeDeclare("agendamento_erro_exchange", ExchangeType.Direct);
+                _channel.QueueDeclare("agendamento_erro", false, false, false, null);
+                _channel.QueueBind("agendamento_erro", "agendamento_erro_exchange", "agendamento_erro.*", null);
                 _channel.BasicQos(0, 1, false);
 
                 _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;

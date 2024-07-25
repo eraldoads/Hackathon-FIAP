@@ -20,7 +20,7 @@ namespace Data.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Agendamento>().HasKey(p => p.Id);
+            //modelBuilder.Entity<Agendamento>().HasKey(p => p.Id);
         }
 
         public DbSet<Agendamento> Agendamentos { get; set; }

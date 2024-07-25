@@ -18,7 +18,7 @@ namespace Data.Messaging
         private readonly string _hostname = Environment.GetEnvironmentVariable("RABBIT_HOSTNAME");
         private readonly string _username = Environment.GetEnvironmentVariable("RABBIT_USERNAME");
         private readonly string _password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD");
-        private readonly Int16 _qtdeRetryPagamento = Convert.ToInt16(Environment.GetEnvironmentVariable("QTDE_RETRY_PAGAMENTO"));
+        private readonly Int16 _qtdeRetryPagamento = Convert.ToInt16(Environment.GetEnvironmentVariable("QTDE_RETRY_AGENDAMENTO"));
 
 
         private ConcurrentDictionary<string, int> _retryCountDictionary = new();
@@ -78,14 +78,14 @@ namespace Data.Messaging
                 }
             };
 
-            _channel.BasicConsume("pagamento_aprovado", false, consumer);
+            _channel.BasicConsume("agendamento_aprovado", false, consumer);
         }
 
         public void ReenqueueMessage(string message)
         {
             EnsureNotDisposed();
             var body = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish("pagamento_aprovado_exchange", "pagamento_aprovado.*", null, body);
+            _channel.BasicPublish("agendamento_aprovado_exchange", "agendamento_aprovado.*", null, body);
         }
 
         private void ConnectRabbitMQ()
@@ -113,9 +113,9 @@ namespace Data.Messaging
                 _connection = factory.CreateConnection();
                 _channel = _connection.CreateModel();
 
-                _channel.ExchangeDeclare("pagamento_aprovado_exchange", ExchangeType.Direct);
-                _channel.QueueDeclare("pagamento_aprovado", false, false, false, null);
-                _channel.QueueBind("pagamento_aprovado", "pagamento_aprovado_exchange", "pagamento_aprovado.*", null);
+                _channel.ExchangeDeclare("agendamento_aprovado_exchange", ExchangeType.Direct);
+                _channel.QueueDeclare("agendamento_aprovado", false, false, false, null);
+                _channel.QueueBind("agendamento_aprovado", "agendamento_aprovado_exchange", "agendamento_aprovado.*", null);
                 _channel.BasicQos(0, 1, false);
 
                 _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;

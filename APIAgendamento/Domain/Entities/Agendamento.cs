@@ -14,6 +14,7 @@ namespace Domain.Entities
         public int IdMedico { get; set; }
         public DateTime DataAgendamento { get; set; }
         public string? Motivo { get; set; }
+        public string? StatusAgendamento { get; set; }
     }
 
 }

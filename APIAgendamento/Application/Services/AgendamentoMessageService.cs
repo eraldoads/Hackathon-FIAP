@@ -1,80 +1,87 @@
-﻿namespace Application.Services
+﻿using Application.Interfaces;
+using Domain.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Transactions;
+
+namespace Application.Services
 {
-    //public class AgendamentoMessageService : IAgendamentoMessageService
-    //{
-    //    private readonly IAgendamentoMessageQueue _AgendamentoMessageQueue;
-    //    private readonly IAgendamentoMessageQueueError _AgendamentoMessageQueueError;
-    //    private readonly IAgendamentoService _AgendamentoService;
-    //    private readonly ILogger<AgendamentoMessageService> _logger;
+    public class AgendamentoMessageService : IAgendamentoMessageService
+    {
+        private readonly IAgendamentoMessageQueue _AgendamentoMessageQueue;
+        private readonly IAgendamentoMessageQueueError _AgendamentoMessageQueueError;
+        private readonly IAgendamentoService _AgendamentoService;
+        private readonly ILogger<AgendamentoMessageService> _logger;
 
-    //    public AgendamentoMessageService(IAgendamentoMessageQueue AgendamentoMessageQueue,
-    //                                     IAgendamentoMessageQueueError AgendamentoMessageQueueError,
-    //                                     IAgendamentoService pagamentoService,
-    //                                     ILogger<AgendamentoMessageService> logger) 
-    //    { 
-    //        _AgendamentoMessageQueue = AgendamentoMessageQueue;
-    //        _AgendamentoMessageQueueError = AgendamentoMessageQueueError;
-    //        _AgendamentoService = pagamentoService;
-    //        _logger = logger;
+        public AgendamentoMessageService(IAgendamentoMessageQueue AgendamentoMessageQueue,
+                                         IAgendamentoMessageQueueError AgendamentoMessageQueueError,
+                                         IAgendamentoService pagamentoService,
+                                         ILogger<AgendamentoMessageService> logger)
+        {
+            _AgendamentoMessageQueue = AgendamentoMessageQueue;
+            _AgendamentoMessageQueueError = AgendamentoMessageQueueError;
+            _AgendamentoService = pagamentoService;
+            _logger = logger;
 
-    //        _AgendamentoMessageQueue.MessageReceived += ReceberMensagemAsync;
-    //        _AgendamentoMessageQueueError.MessageReceived += ReceberMensagemAsyncError;
-    //    }
+            _AgendamentoMessageQueue.MessageReceived += ReceberMensagemAsync;
+            _AgendamentoMessageQueueError.MessageReceived += ReceberMensagemAsyncError;
+        }
 
-    //    public async Task ReceberMensagens()
-    //    {
-    //        await _AgendamentoMessageQueue.StartListening();
-    //        await _AgendamentoMessageQueueError.StartListening();
-    //    }
+        public async Task ReceberMensagens()
+        {
+            await _AgendamentoMessageQueue.StartListening();
+            await _AgendamentoMessageQueueError.StartListening();
+        }
 
-    //    private async Task ReceberMensagemAsync(string mensagem)
-    //    {
-    //        try
-    //        {
-    //            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-    //            {                    
-    //                PagamentoInput pagamentoInput = JsonSerializer.Deserialize<PagamentoInput>(mensagem);
+        private async Task ReceberMensagemAsync(string mensagem)
+        {
+            try
+            {
+                using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-    //                if (pagamentoInput.statusPagamento.Equals("Aprovado"))
-    //                {
-    //                    await _AgendamentoService.UpdateStatusAgendamento(pagamentoInput.idPedido, "Em Preparação");
-    //                }
+                /// TODO: O que precisa ser atualizado
 
-    //                scope.Complete();
-    //            }
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            _logger.LogError(ex, "Erro ao processar mensagem recebida.");
-    //            throw; // Rethrow exception para garantir que a mensagem é reinfileirada via PedidoMessageQueue
-    //        }
-    //    }
+                //ConsultaInput pagamentoInput = JsonSerializer.Deserialize<ConsultaInput>(mensagem);
 
-    //    private async Task ReceberMensagemAsyncError(string mensagem)
-    //    {
-    //        try
-    //        {
-    //            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-    //            {
-    //                AgendamentoDTO agendamento = JsonSerializer.Deserialize<AgendamentoDTO>(mensagem);
+                //if (pagamentoInput.statusPagamento.Equals("Aprovado"))
+                //{
+                //    await _AgendamentoService.PutAgendamentoAsync(pagamentoInput.idPedido, "Em Preparação");
+                //}
 
-    //                await _AgendamentoService.UpdateStatusAgendamento(agendamento.IdAgendamento, "Cancelado");
+                scope.Complete();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao processar mensagem recebida.");
+                throw; // Rethrow exception para garantir que a mensagem é reinfileirada via PedidoMessageQueue
+            }
+        }
 
-    //                scope.Complete();
-    //            }
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            _logger.LogError(ex, "Erro ao processar mensagem recebida.");
-    //            throw; // Rethrow exception para garantir que a mensagem é reinfileirada via AgendamentoMessageQueueError
-    //        }
-    //    }
+        private async Task ReceberMensagemAsyncError(string mensagem)
+        {
+            try
+            {
+                using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-    //    public void Dispose()
-    //    {
-    //        _AgendamentoMessageQueue.MessageReceived -= ReceberMensagemAsync;
-    //        _AgendamentoMessageQueueError.MessageReceived -= ReceberMensagemAsyncError;
-    //        GC.SuppressFinalize(this);
-    //    }
-    //}
+                /// TODO: o que precisa ser atualizado
+
+                //AgendamentoDTO agendamento = JsonSerializer.Deserialize<AgendamentoDTO>(mensagem);
+
+                //await _AgendamentoService.PutAgendamentoAsync(agendamento.IdAgendamento, "Cancelado");
+
+                scope.Complete();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao processar mensagem recebida.");
+                throw; // Rethrow exception para garantir que a mensagem é reinfileirada via AgendamentoMessageQueueError
+            }
+        }
+
+        public void Dispose()
+        {
+            _AgendamentoMessageQueue.MessageReceived -= ReceberMensagemAsync;
+            _AgendamentoMessageQueueError.MessageReceived -= ReceberMensagemAsyncError;
+            GC.SuppressFinalize(this);
+        }
+    }
 }
